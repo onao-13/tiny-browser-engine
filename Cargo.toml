@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 html = { path = "html" }
 css_v2_1 = { path = "css_v2_1" }
+document_parser = { path = "document_parser" }
 
 [features]
