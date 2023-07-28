@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use crate::dom::NodeType::{Comment, Doctype, Empty, Text};
+use css_v2_1::stylesheet::Stylesheet;
+use crate::dom::NodeType::{Comment, Doctype, Empty, Style, Text};
 
 #[derive(Debug)]
 pub struct Node {
@@ -13,6 +14,7 @@ pub enum NodeType {
     Element(ElementData),
     Comment(String),
     Doctype(String),
+    Style(Stylesheet),
     Empty
 }
 
@@ -43,3 +45,5 @@ pub fn comment(com: String) -> Node { Node { children: Vec::new(), node_type: Co
 pub fn doctype(doctype: String) -> Node { Node { children: Vec::new(), node_type: Doctype(doctype) } }
 
 pub fn empty() -> Node { Node { children: Vec::new(), node_type: Empty } }
+
+pub fn style(stylesheet: Stylesheet) -> Node {    Node{  children: Vec::new(), node_type:Style(stylesheet)}}
