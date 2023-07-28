@@ -21,13 +21,13 @@ impl Value {
 
     fn to_color(&self) -> Color {
         match self {
-            Value::ColorConstValue(n, ColorConst::Green) => Color {
+            Value::ColorConstValue(_n, ColorConst::Green) => Color {
                 r: 0, g: 255, b: 0, a: 255
             },
-            Value::ColorConstValue(n, ColorConst::Blue ) => Color {
+            Value::ColorConstValue(_n, ColorConst::Blue ) => Color {
                 r: 0, g: 0, b: 255, a: 255
             },
-            Value::ColorConstValue(n, ColorConst::Red) => Color {
+            Value::ColorConstValue(_n, ColorConst::Red) => Color {
                 r: 255, g: 0, b: 0, a: 255
             },
             _ => panic!("unknown color")
