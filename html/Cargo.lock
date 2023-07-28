@@ -3,5 +3,12 @@
 version = 3
 
 [[package]]
+name = "css_v2_1"
+version = "0.1.0"
+
+[[package]]
 name = "html"
 version = "0.1.0"
+dependencies = [
+ "css_v2_1",
+]
