@@ -1,8 +1,6 @@
 use std::collections::HashMap;
-use std::io::SeekFrom::Start;
 use crate::dom;
-use crate::dom::{comment, doctype, elem, Node};
-use crate::dom::NodeType::Comment;
+use crate::dom::{comment, doctype, elem, Node, style};
 
 pub fn parse_html(source: String) -> Node {
     let mut nodes = Parser { pos: 0, input: source }.parse_nodes();
@@ -18,6 +16,8 @@ struct Parser {
     pos: usize,
     input: String
 }
+
+const STYLE_TAG: &'static str = "style";
 
 impl Parser {
     fn next_char(&self) -> char {
@@ -81,16 +81,28 @@ impl Parser {
         let attrs = self.parse_attributes();
         assert_eq!(self.consume_char(), '>');
 
+        if tag_name == STYLE_TAG {
+            return self.parse_style();
+        }
+
         // Content
         let children = self.parse_nodes();
 
         // Close tag
-        assert_eq!(self.consume_char(), '<');
-        assert_eq!(self.consume_char(), '/');
-        assert_eq!(self.parse_tag_name(), tag_name);
-        assert_eq!(self.consume_char(), '>');
+        self.check_close_tag(&tag_name);
+        // assert_eq!(self.consume_char(), '<');
+        // assert_eq!(self.consume_char(), '/');
+        // assert_eq!(self.parse_tag_name(), tag_name);
+        // assert_eq!(self.consume_char(), '>');
 
         return elem(tag_name, attrs, children);
+    }
+
+    fn check_close_tag(&mut self, tag_name: &String) {
+        assert_eq!(self.consume_char(), '<');
+        assert_eq!(self.consume_char(), '/');
+        assert_eq!(self.parse_tag_name(), *tag_name);
+        assert_eq!(self.consume_char(), '>');
     }
 
     fn parse_text(&mut self) -> Node {
@@ -185,7 +197,26 @@ impl Parser {
         self.consume_whitespace();
         let value = self.consume_while(|c| c != '>');
         assert_eq!(self.consume_char(), '>');
+        return doctype(value);
+    }
 
-        return dom::doctype(value);
+    fn parse_style(&mut self) -> Node {
+        let mut source = String::from("");
+
+        loop {
+            self.consume_whitespace();
+
+            if self.eof() || self.starts_with("</") {
+                break
+            }
+
+            source.push(self.consume_char());
+        }
+
+        let stylesheet = css_v2_1::css::parse_css(source);
+
+        self.check_close_tag(&STYLE_TAG.to_string());
+
+        return style(stylesheet);
     }
 }
