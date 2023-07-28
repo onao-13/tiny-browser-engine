@@ -1,0 +1,8 @@
+[package]
+name = "parser_page"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+html = {   path = "../html" }
+css_v2_1 = {  path = "../css_v2_1" }
